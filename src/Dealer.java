@@ -7,6 +7,8 @@ public class Dealer {
 
     public Dealer() {
         this.hands = new ArrayList<Hand>();
+        Hand h = new Hand();
+        hands.add(h);
         this.wallet = 1000;
     }
 
@@ -26,6 +28,12 @@ public class Dealer {
     // set the player's wallet to the one provided
     public void setWallet(int wallet) {
         this.wallet = wallet;
+    }
+
+    public void resetHands() {
+        this.hands.clear();
+        Hand h = new Hand();
+        hands.add(h);
     }
 
 }

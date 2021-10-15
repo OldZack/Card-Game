@@ -8,7 +8,9 @@ public class Player {
 
     // default marker is set to 'x'
     public Player() {
+        Hand h = new Hand();
         this.hands = new ArrayList<>();
+        hands.add(h);
         this.wallet = 1000;
         this.bet = 0;
     }
@@ -29,6 +31,24 @@ public class Player {
     // set the player's wallet to the one provided
     public void setWallet(int wallet) {
         this.wallet = wallet;
+    }
+
+    public int getBet() {
+        return this.bet;
+    }
+
+    public void setBet(int bet) {
+        this.bet += bet;
+    }
+
+    public void resetBet() {
+        this.bet = 0;
+    }
+
+    public void resetHands() {
+        this.hands.clear();
+        Hand h = new Hand();
+        hands.add(h);
     }
 
 }
