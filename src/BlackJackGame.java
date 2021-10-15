@@ -46,7 +46,7 @@ public class BlackJackGame extends CardGame{
             }
             if (yOrN.equals("Y")) {
                 if (broke) {
-                    System.out.println("You went broke gg.");
+                    System.out.println("You already went broke gg.");
                     break;
                 }
                 System.out.println("You cashed out. Bye.");
