@@ -1,12 +1,11 @@
-import java.util.ArrayList;
 import java.util.Scanner;
 
+// BlackJackGame.java: Control the process of Black Jack and store information of the game.
 public class BlackJackGame extends CardGame{
 
-//    ArrayList<Player> playerList = new ArrayList<Player>();
-//    Dealer dealer  = new Dealer();
-//    Deck deck = new Deck();
+    // The maximum value the player can not exceed.
     private final int maxValue = 21;
+    // The minimum value the Dealer should exceed while hitting.
     private final int minValue = 17;
 
     public BlackJackGame() {
@@ -33,8 +32,19 @@ public class BlackJackGame extends CardGame{
                 broke = true;
             }
             System.out.println("Would you like to cash out? Press Y or N.");
-            Scanner i = new Scanner(System.in);
-            if (i.next().equals("Y")) {
+            Scanner input = new Scanner(System.in);
+            String pattern = "[YN]";
+            String yOrN = "";
+            while(true) {
+                yOrN = input.next();
+                if(!yOrN.matches(pattern)) {
+                    System.out.println("Error: Wrong input! Please input again.");
+                    continue;
+                }
+                else
+                    break;
+            }
+            if (yOrN.equals("Y")) {
                 if (broke) {
                     System.out.println("You went broke gg.");
                     break;
@@ -59,10 +69,10 @@ public class BlackJackGame extends CardGame{
         for (int i = 0; i < players.size(); i++) {
             players.get(i).resetBet();
             deal(players.get(i));
-            //System.out.println(dealer.getHands().get(0).get_cards());
             // The Dealer deals two cards to the Player.
             System.out.println("The two cards dealt to you are:");
             System.out.println(players.get(i).getHands().get(0).displayCards());
+            System.out.format("You have %d now.\n", players.get(i).getWallet());
             // The Dealer is dealt two cards, one face up and another down.
             System.out.format("The Dealer gets %s and another unknown. \n", dealer.getHands().get(0).get_cards().get(0));
             System.out.println("Dear Player, how much do you want to bet?");
@@ -70,7 +80,7 @@ public class BlackJackGame extends CardGame{
                 try {
                     int amount = Integer.parseInt(input.next());
                     if (amount > players.get(i).getWallet()) {
-                        System.out.format("The amount is out of what you have(%d). Please input again.", players.get(i).getWallet());
+                        System.out.format("The amount is out of what you have(%d). Please input again.\n", players.get(i).getWallet());
                         continue;
                     } else {
                         players.get(i).setBet(amount);
@@ -83,7 +93,9 @@ public class BlackJackGame extends CardGame{
 
         }
 
+        // allowed for multiple players
         for (int i = 0; i < players.size(); i++) {
+            // for player's each hand
             for (int j = 0; j < players.get(i).getHands().size(); j++) {
                 Hand hand = players.get(i).getHands().get(j);
                 boolean end = false;
@@ -102,7 +114,7 @@ public class BlackJackGame extends CardGame{
                         }
                         else {
                             int n = Integer.parseInt(action);
-                            if(n==1) {
+                            if(n==1) { // Hit
                                 Card c = deck.draw();
                                 hand.hit(c);
                                 System.out.println("You got " + c.toString() + ".");
@@ -110,6 +122,7 @@ public class BlackJackGame extends CardGame{
                                 if(hand.getValue(maxValue) > maxValue) {
                                     System.out.println("Bust.");
                                     players.get(i).setWallet(players.get(i).getWallet() - players.get(i).getBet());
+                                    System.out.format("You have %d now.\n", players.get(i).getWallet());
                                     end = true;
                                 }
                                 // current hand hits and gets 21
@@ -129,10 +142,11 @@ public class BlackJackGame extends CardGame{
                                     if (winner < 0) {
                                         players.get(i).setWallet(players.get(i).getWallet() - players.get(i).getBet());
                                     }
+                                    System.out.format("You have %d now.\n", players.get(i).getWallet());
                                     end = true;
                                 }
                                 break;
-                            }else if(n==2) {
+                            }else if(n==2) { // Stand
                                 System.out.println("The face down card is revealed by the Dealer:" + dh.get_cards().get(1));
                                 int value = dh.getValue(minValue);
                                 while(value < minValue) {
@@ -148,9 +162,10 @@ public class BlackJackGame extends CardGame{
                                 if (winner < 0) {
                                     players.get(i).setWallet(players.get(i).getWallet() - players.get(i).getBet());
                                 }
+                                System.out.format("You have %d now.\n", players.get(i).getWallet());
                                 end = true;
                                 break;
-                            }else if(n==3) {
+                            }else if(n==3) { // Split
                                 if(!hand.ifAvailable()) {
                                     System.out.println("You can not split.");
                                     continue;
@@ -165,7 +180,7 @@ public class BlackJackGame extends CardGame{
                                 //end = true;
                                 break;
                             }
-                            else if (n == 4) {
+                            else if (n == 4) { // Double Up
                                 int bet = players.get(i).getBet();
                                 Card c4 = deck.draw();
                                 hand.hit(c4);
@@ -185,6 +200,7 @@ public class BlackJackGame extends CardGame{
                                 if (winner < 0) {
                                     players.get(i).setWallet(players.get(i).getWallet() - 2*bet);
                                 }
+                                System.out.format("You have %d now.\n", players.get(i).getWallet());
                                 end = true;
                                 break;
                             }
@@ -206,21 +222,25 @@ public class BlackJackGame extends CardGame{
         int value = dealer.getHands().get(0).getValue(minValue);
         // The Player wins.
         if (h.getValue(maxValue) > maxValue) {
+            System.out.format("Your value is %d.\n", h.getValue(maxValue));
             System.out.println("You already Bust.");
             return -1;
         }
         if((value > 21) || value < h.getValue(maxValue)) {
+            System.out.format("Your value is %d, and the Dealer's is %d.\n", h.getValue(maxValue), value);
             System.out.println("You win! Get your bet.");
             return 1;
             //players.get(i).setWallet(players.get(i).getWallet() + players.get(i).getBet());
         }
         // The Player loses.
         else if(value > h.getValue(maxValue)) {
+            System.out.format("Your value is %d, and the Dealer's is %d.\n", h.getValue(maxValue), value);
             System.out.println("Unfortunately, you lose.");
             return -1;
             //players.get(i).setWallet(players.get(i).getWallet() - players.get(i).getBet());
         }
         else {
+            System.out.format("Your value is %d, and the Dealer's is %d.\n", h.getValue(maxValue), value);
             System.out.println("It's a tie.");
             return 0;
         }

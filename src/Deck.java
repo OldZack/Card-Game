@@ -1,5 +1,6 @@
 import java.util.*;
 
+// Deck.java: 52 cards in stock. Each card is dealt from the deck.
 public class Deck {
     private List<Card> cards;
 
@@ -58,6 +59,7 @@ public class Deck {
         }
     }
 
+    // The dealer or player draws.
     public Card draw(){
         int spot = (int)(Math.random()*cards.size());
         Card c = cards.get(spot);

@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
+// Dealer.java: The opponent to the player, deals cards and interacts with players.
 public class Dealer {
     private List<Hand> hands;
     private int wallet;

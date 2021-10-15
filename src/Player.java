@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
+// Player.java: The Player in the card game, it's scalable to allow multiple players.
 public class Player {
     private List<Hand> hands;
     private int wallet;

@@ -1,4 +1,5 @@
 
+// Card.java: Store the information in a single card.
 public class Card {
     private String rank;
     private String suit;
