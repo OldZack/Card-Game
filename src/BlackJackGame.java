@@ -250,23 +250,26 @@ public class BlackJackGame extends CardGame{
 
     public int getValue(Hand h, int ceiling){
         int res = 0;
-        boolean haveA = false;
+        int numberOfA = 0;
         for (Card c : h.get_cards()) {
             if (c.get_rank().equals("J") || c.get_rank().equals("Q") || c.get_rank().equals("K")) {
                 res += 10;
             }
             else if (c.get_rank().equals("A")) {
-                res += 11;
-                haveA = true;
+                res += 1;
+                numberOfA +=1;
             }
             else {
                 res += Integer.parseInt(c.get_rank());
             }
         }
         // if there exists A in cards and the rest value is smaller than 10, we convert A to 11.
-        if (res > ceiling && haveA) {
-            res -= 10;
+        for (int i = 0; i < numberOfA; i++){
+            if (res < ceiling-10) {
+                res += 10;
+            }
         }
+
         return res;
     }
 }
