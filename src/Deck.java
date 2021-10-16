@@ -5,7 +5,7 @@ public class Deck {
     private List<Card> cards;
 
     Deck(){
-        cards = new ArrayList<Card>();
+        cards = new ArrayList<>();
         for (int i = 0; i < 52; i++){
             String rank = "" + (( i + 1 ) % 13);
             rank = switch (rank) {

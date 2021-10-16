@@ -7,7 +7,8 @@ public class GameManager {
     // The entire list will have 2 default games for now :)
     public GameManager() {
         BlackJackGame b = new BlackJackGame();
-        this.gameList = new CardGame[]{b};
+        TEGame t = new TEGame();
+        this.gameList = new CardGame[]{b, t};
     }
 
     // get the current game list

@@ -1,6 +1,5 @@
 import java.util.*;
 
-// Hand.java: Store cards in one hand, each player has one or more hands.
 public class Hand {
     private List<Card> cards;
 
@@ -28,30 +27,6 @@ public class Hand {
         return res;
     }
 
-    // get the sum of face value of cards.
-    public int getValue(int ceiling) {
-        int res = 0;
-        boolean haveA = false;
-        for (Card c : cards) {
-            if (c.get_rank().equals("J") || c.get_rank().equals("Q") || c.get_rank().equals("K")) {
-                res += 10;
-            }
-            else if (c.get_rank().equals("A")) {
-                res += 1;
-                haveA = true;
-            }
-            else {
-                res += Integer.parseInt(c.get_rank());
-            }
-        }
-        // if there exists A in cards and the rest value is smaller than 10, we convert A to 11.
-        if (res <= ceiling - 10 && haveA) {
-            res += 10;
-        }
-        return res;
-    }
-
-    // only invoked when splitting
     public Hand split_hand(){
         Hand newCards = new Hand();
         newCards.add_card(cards.get(1));

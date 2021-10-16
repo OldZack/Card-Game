@@ -13,17 +13,19 @@ public class BlackJackGame extends CardGame{
     }
 
     @Override
-    public void deal(Player p) {
+    public void deal() {
         dealer.getHands().get(0).add_card(deck.draw());
         dealer.getHands().get(0).add_card(deck.draw());
-        p.getHands().get(0).add_card(deck.draw());
-        p.getHands().get(0).add_card(deck.draw());
+        for (Player p : players){
+            p.getHands().get(0).add_card(deck.draw());
+            p.getHands().get(0).add_card(deck.draw());
+        }
     }
 
     @Override
     public void startGame() {
-
         System.out.println("Welcome to Black Jack!");
+        players.add(new Player());
         boolean broke = false;
         while(!broke) {
             round();
@@ -66,9 +68,9 @@ public class BlackJackGame extends CardGame{
         }
         Hand dh = dealer.getHands().get(0);
         Scanner input = new Scanner(System.in);
+        deal();
         for (int i = 0; i < players.size(); i++) {
             players.get(i).resetBet();
-            deal(players.get(i));
             // The Dealer deals two cards to the Player.
             System.out.println("The two cards dealt to you are:");
             System.out.println(players.get(i).getHands().get(0).displayCards());
@@ -99,7 +101,7 @@ public class BlackJackGame extends CardGame{
             for (int j = 0; j < players.get(i).getHands().size(); j++) {
                 Hand hand = players.get(i).getHands().get(j);
                 boolean end = false;
-                while(hand.getValue(maxValue) <= maxValue && !end ) {
+                while(getValue(hand, maxValue) <= maxValue && !end ) {
                     System.out.println("Your turn, what would you like to do next:(just choose the number)");
                     System.out.println("1.Hit\n" +
                             "2.Stand\n" +
@@ -119,21 +121,21 @@ public class BlackJackGame extends CardGame{
                                 hand.hit(c);
                                 System.out.println("You got " + c.toString() + ".");
                                 // If the Player goes bust.
-                                if(hand.getValue(maxValue) > maxValue) {
+                                if(getValue(hand, maxValue) > maxValue) {
                                     System.out.println("Bust.");
                                     players.get(i).setWallet(players.get(i).getWallet() - players.get(i).getBet());
                                     System.out.format("You have %d now.\n", players.get(i).getWallet());
                                     end = true;
                                 }
                                 // current hand hits and gets 21
-                                else if(hand.getValue(maxValue) == maxValue) {
+                                else if(getValue(hand, maxValue) == maxValue) {
                                     System.out.println("Your hand value is 21. ");
-                                    int value = dh.getValue(minValue);
+                                    int value = getValue(dh, minValue);
                                     while(value < minValue) {
                                         Card tempC = deck.draw();
                                         dh.hit(tempC);
                                         System.out.println("Dealer drew " + tempC.toString() + ".");
-                                        value = dh.getValue(minValue);
+                                        value = getValue(dh, minValue);
                                     }
                                     int winner = checkWinner(hand);
                                     if (winner > 0) {
@@ -148,12 +150,12 @@ public class BlackJackGame extends CardGame{
                                 break;
                             }else if(n==2) { // Stand
                                 System.out.println("The face down card is revealed by the Dealer:" + dh.get_cards().get(1));
-                                int value = dh.getValue(minValue);
+                                int value = getValue(dh, minValue);
                                 while(value < minValue) {
                                     Card tempC2 = deck.draw();
                                     dh.hit(tempC2);
                                     System.out.println("Dealer drew " + tempC2.toString() + ".");
-                                    value = dh.getValue(minValue);
+                                    value = getValue(dh, minValue);
                                 }
                                 int winner = checkWinner(hand);
                                 if (winner > 0) {
@@ -186,12 +188,12 @@ public class BlackJackGame extends CardGame{
                                 hand.hit(c4);
                                 System.out.println("You drew " + c4 + ".");
                                 System.out.println("The face down card is revealed by the Dealer:" + dh.get_cards().get(1));
-                                int value = dh.getValue(minValue);
+                                int value = getValue(dh, minValue);
                                 while(value < minValue) {
                                     Card tempC3 = deck.draw();
                                     dh.hit(tempC3);
                                     System.out.println("Dealer drew " + tempC3.toString() + ".");
-                                    value = dh.getValue(minValue);
+                                    value = getValue(dh, minValue);
                                 }
                                 int winner = checkWinner(hand);
                                 if (winner > 0) {
@@ -219,30 +221,52 @@ public class BlackJackGame extends CardGame{
     // only called when player didn't go bust.
     public int checkWinner(Hand h) {
 
-        int value = dealer.getHands().get(0).getValue(minValue);
+        int value = getValue(dealer.getHands().get(0), minValue);
         // The Player wins.
-        if (h.getValue(maxValue) > maxValue) {
-            System.out.format("Your value is %d.\n", h.getValue(maxValue));
+        if (getValue(h, maxValue) > maxValue) {
+            System.out.format("Your value is %d.\n", getValue(h, maxValue));
             System.out.println("You already Bust.");
             return -1;
         }
-        if((value > 21) || value < h.getValue(maxValue)) {
-            System.out.format("Your value is %d, and the Dealer's is %d.\n", h.getValue(maxValue), value);
+        if((value > 21) || value < getValue(h, maxValue)) {
+            System.out.format("Your value is %d, and the Dealer's is %d.\n", getValue(h, maxValue), value);
             System.out.println("You win! Get your bet.");
             return 1;
             //players.get(i).setWallet(players.get(i).getWallet() + players.get(i).getBet());
         }
         // The Player loses.
-        else if(value > h.getValue(maxValue)) {
-            System.out.format("Your value is %d, and the Dealer's is %d.\n", h.getValue(maxValue), value);
+        else if(value > getValue(h, maxValue)) {
+            System.out.format("Your value is %d, and the Dealer's is %d.\n", getValue(h, maxValue), value);
             System.out.println("Unfortunately, you lose.");
             return -1;
             //players.get(i).setWallet(players.get(i).getWallet() - players.get(i).getBet());
         }
         else {
-            System.out.format("Your value is %d, and the Dealer's is %d.\n", h.getValue(maxValue), value);
+            System.out.format("Your value is %d, and the Dealer's is %d.\n", getValue(h, maxValue), value);
             System.out.println("It's a tie.");
             return 0;
         }
+    }
+
+    public int getValue(Hand h, int ceiling){
+        int res = 0;
+        boolean haveA = false;
+        for (Card c : h.get_cards()) {
+            if (c.get_rank().equals("J") || c.get_rank().equals("Q") || c.get_rank().equals("K")) {
+                res += 10;
+            }
+            else if (c.get_rank().equals("A")) {
+                res += 11;
+                haveA = true;
+            }
+            else {
+                res += Integer.parseInt(c.get_rank());
+            }
+        }
+        // if there exists A in cards and the rest value is smaller than 10, we convert A to 11.
+        if (res > ceiling && haveA) {
+            res -= 10;
+        }
+        return res;
     }
 }

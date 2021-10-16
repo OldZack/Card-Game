@@ -2,7 +2,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Player.java: The Player in the card game, it's scalable to allow multiple players.
-public class Player {
+public class Player implements Comparable<Player> {
+    private String name;
     private List<Hand> hands;
     private int wallet;
     private int bet;
@@ -16,8 +17,21 @@ public class Player {
         this.bet = 0;
     }
 
+    public Player(String n) {
+        name = n;
+        Hand h = new Hand();
+        this.hands = new ArrayList<>();
+        hands.add(h);
+        this.wallet = 1000;
+        this.bet = 0;
+    }
+
     public Player(int fund) {
         this.wallet = fund;
+    }
+
+    public String get_name(){
+        return this.name;
     }
 
     // get the hands from the player
@@ -50,6 +64,16 @@ public class Player {
         this.hands.clear();
         Hand h = new Hand();
         hands.add(h);
+    }
+
+    public int compareTo(Player p){
+        if (this.wallet == p.getWallet()){
+            return 0;
+        } else if(this.wallet > p.getWallet()){
+            return 1;
+        } else{
+            return -1;
+        }
     }
 
 }

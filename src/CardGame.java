@@ -8,7 +8,7 @@ public abstract class CardGame {
     protected Deck deck;
 
     public CardGame() {
-        this.players.add(new Player());
+        //this.players.add(new Player());
         this.dealer = new Dealer();
         this.deck = new Deck();
     }
@@ -19,6 +19,6 @@ public abstract class CardGame {
 
     public abstract int checkWinner(Hand h);
 
-    public abstract void deal(Player p);
+    public abstract void deal();
 
 }
